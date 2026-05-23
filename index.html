@@ -1145,8 +1145,8 @@ let html = "<tr><th>Adm</th><th>Name</th><th>Grade</th><th>Stream</th><th>Pathwa
 
   row.querySelector(".percent-cell").innerHTML =
     percent.toFixed(1) + "%";
-}
-async function saveMarks() {
+  }
+      async function saveMarks() {
 
   const exam = el("mExam").value;
   const grade = el("mGrade").value;
@@ -1155,52 +1155,126 @@ async function saveMarks() {
   const year = el("mYear").value;
   const subject = el("mSubject").value;
 
+  const outOf =
+    Number(el("mOutOf").value) || 100;
+
   if (!exam || !grade || !stream || !term || !year || !subject) {
+
     toast("Select ALL fields");
+
     return;
+
   }
 
-  const students = await getAll("students");
-  const DOUBLE = ["ENG", "I/SCI", "KIS"];
+  const students =
+    await getAll("students");
 
-  const tx = db.transaction(["marks"], "readwrite");
-  const store = tx.objectStore("marks");
+  // SUBJECTS WITH PAPER 1 + PAPER 2
+  const DOUBLE = [
+    "ENG",
+    "I/SCI",
+    "KIS"
+  ];
 
-  const rows = document.querySelectorAll("#marksTable tr");
+  const tx =
+    db.transaction(["marks"], "readwrite");
+
+  const store =
+    tx.objectStore("marks");
+
+  const rows =
+    document.querySelectorAll("#marksTable tr");
 
   rows.forEach(row => {
 
-    const admEl = row.querySelector("[data-adm]");
+    const admEl =
+      row.querySelector("[data-adm]");
+
     if (!admEl) return;
 
-    const adm = admEl.dataset.adm;
-    const student = students.find(s => s.adm === adm);
+    const adm =
+      admEl.dataset.adm;
+
+    const student =
+      students.find(s => s.adm === adm);
+
     if (!student) return;
 
-    const isDouble = DOUBLE.includes(subject);
+    const isDouble =
+      DOUBLE.includes(subject);
 
     let pp1 = 0;
     let pp2 = 0;
+
+    let rawScore = 0;
+
     let percentage = 0;
 
+    // ================= DOUBLE SUBJECTS =================
     if (isDouble) {
 
-      pp1 = Number(row.querySelector(".pp1")?.value || 0);
-      pp2 = Number(row.querySelector(".pp2")?.value || 0);
+      pp1 =
+        Number(
+          row.querySelector(".pp1")?.value || 0
+        );
 
-      percentage = pp1 + pp2; // FINAL SCORE
+      pp2 =
+        Number(
+          row.querySelector(".pp2")?.value || 0
+        );
 
-    } else {
+      // BOTH PAPERS ENTERED
+      if (pp2 > 0) {
 
-      pp1 = Number(row.querySelector(".single")?.value || 0);
-      percentage = pp1;
+        rawScore = pp1 + pp2;
+
+        // TOTAL IS FINAL %
+        percentage = rawScore;
+
+      }
+
+      // ONLY PAPER 1 ENTERED
+      else {
+
+        rawScore = pp1;
+
+        percentage =
+          (rawScore / outOf) * 100;
+
+      }
+
+    }
+
+    // ================= NORMAL SUBJECTS =================
+    else {
+
+      pp1 =
+        Number(
+          row.querySelector(".single")?.value || 0
+        );
+
+      rawScore = pp1;
+
+      percentage =
+        (rawScore / outOf) * 100;
+
+    }
+
+    // LIMIT TO 100
+    if (percentage > 100) {
+
+      percentage = 100;
 
     }
 
     const record = {
-      key: `${adm}_${subject}_${exam}_${term}_${year}`,
+
+      key:
+        `${adm}_${subject}_${exam}_${term}_${year}`,
+
       adm,
       name: student.name,
+
       subject,
       exam,
       grade,
@@ -1208,21 +1282,46 @@ async function saveMarks() {
       term,
       year,
 
+      // PAPERS
       pp1,
       pp2,
-      percentage: Number(percentage.toFixed(1))
+
+      // RAW MARK
+      rawScore,
+
+      // EXAM OUT OF
+      outOf,
+
+      // FINAL %
+      score:
+        Number(percentage.toFixed(1)),
+
+      percentage:
+        Number(percentage.toFixed(1))
+
     };
 
+    console.log("Saving:", record);
+
     store.put(record);
+
   });
 
-  tx.oncomplete = () => toast("Marks saved successfully ✅");
-  
-  tx.onerror = () => {  
-    console.error(tx.error);  
-    toast("Error saving marks ❌");  
-  };  
-}  
+  tx.oncomplete = () => {
+
+    toast("Marks saved successfully ✅");
+
+  };
+
+  tx.onerror = () => {
+
+    console.error(tx.error);
+
+    toast("Error saving marks ❌");
+
+  };
+
+}
   
 async function generateAnalysis() {
 
