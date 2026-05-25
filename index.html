@@ -951,7 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
     markSubject.innerHTML = "";  
     markSubject.add(new Option("Select subject", ""));  
   
-    let html = "<tr><th>Subject</th><th>Pathway</th><th>Gender</th><th>Action</th></tr>";   
+    let html = "<tr><th>Subject</th><th>Pathway</th><th>Action</th></tr>";   
     subjects.forEach(s => {  
       html += `<tr>  
         <td>${escapeHtml(s.name)}</td>  
