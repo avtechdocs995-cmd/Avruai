@@ -2224,27 +2224,27 @@ summaryHTML += `
         `;
 
         subjectRows.forEach(r => {
-            body += `
-                <tr>
-                    <td style="text-align:left">${escapeHtml(r.subject)}</td>
-                    <td>${r.open ?? ""}</td>
-                    <td>${r.mid ?? ""}</td>
-                    <td>${r.end ?? ""}</td>
-                    <td>${r.total}</td>
-                    <td>${r.avg.toFixed(1)}</td>
-                    <td>${r.grade}</td>
-                </tr>
-            `;
-        });
+    body += `
+        <tr>
+            <td style="text-align:left">${escapeHtml(r.subject)}</td>
+            <td>${r.open ?? ""}</td>
+            <td>${r.mid ?? ""}</td>
+            <td>${r.end ?? ""}</td>
+            <td>${Number(r.total).toFixed(2)}</td>
+            <td>${r.avg.toFixed(1)}</td>
+            <td>${r.grade}</td>
+        </tr>
+    `;
+});
 
         body += `
                 </table>
             </div>
 
-            <div class="summary-box">
-                <span class="badge">Overall Total: ${overallTotal}</span>
-                <span class="badge">Overall Average: ${overallAvg.toFixed(1)}</span>
-                <span class="badge">Overall Grade: ${overallGrade}</span>
+                        <div class="summary-box">
+<span class="badge">
+  Overall Total: ${Number(overallTotal).toFixed(2)}
+</span>
 
                 <span class="badge">Opening Rank: ${openingRank}</span>
                 <span class="badge">Midterm Rank: ${midtermRank}</span>
