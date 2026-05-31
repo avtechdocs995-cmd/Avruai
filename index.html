@@ -90,6 +90,21 @@
   color:white;
   font-weight:bold;
 }
+  @media print {
+
+  thead{
+    display: table-header-group;
+  }
+
+  tbody{
+    display: table-row-group;
+  }
+
+  tr{
+    page-break-inside: avoid;
+  }
+
+  }
   /* PRINT COLORS FOR PDF */
 @media print {
 
@@ -2350,50 +2365,70 @@ summaryHTML += `
     </div>  
   
     <div class="table-wrap">  
-      <table>  
-<tr>  
-  <th>No</th>  
-  <th>Adm</th>  
-  <th>Name</th>  
-  <th>Gender</th>  
-  <th>MATH</th>  
-  <th>ENG</th>  
-  <th>KISW</th>  
-  <th>SCI</th>  
-  <th>AGR</th>  
-  <th>SST</th>  
-  <th>CRE</th>  
-  <th>CAS</th>  
-  <th>PT</th>  
-</tr>  
+    <div class="table-wrap">
+<table>
+
+<thead>
+
+<tr>
+  <th>No</th>
+  <th>Adm</th>
+  <th>Name</th>
+  <th>Gender</th>
+
+  <th>AGR</th>
+  <th>CAS</th>
+  <th>CRE</th>
+  <th>ENG</th>
+  <th>I/SCI</th>
+  <th>KIS</th>
+  <th>MAT</th>
+  <th>PT</th>
+  <th>SST</th>
+
+</tr>
+
+</thead>
+
+<tbody>
   `;  
   
-  filtered.forEach((s, i) => {  
-  html += `  
-    <tr>  
-      <td>${i + 1}</td>  
-      <td>${escapeHtml(s.adm)}</td>  
-      <td style="text-align:left">${escapeHtml(s.name)}</td>  
-      <td>${escapeHtml(s.gender)}</td>  
+ filtered.forEach((s, i) => {
+
+  html += `
+  <tr>
+
+    <td>${i + 1}</td>
+
+    <td>${escapeHtml(s.adm)}</td>
+
+    <td style="text-align:left">
+      ${escapeHtml(s.name)}
+    </td>
+
+    <td>${escapeHtml(s.gender)}</td>
+
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+
+  </tr>
+  `;
+
+});
   
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-      <td></td>  
-    </tr>  
-  `;  
-});  
-  
-  html += `  
-      </table>  
-    </div>  
-  </div>  
-  `;  
+  html += `
+    </tbody>
+    </table>
+  </div>
+</div>
+`;
   
   // SHOW IN ANALYSIS AREA FOR PRINT  
   el("analysisOut").innerHTML = html;  
